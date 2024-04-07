@@ -1,12 +1,12 @@
 <template>
-    <div class="base-input" >
+    <div :class="[...classList, 'base-input']" >
         <div class="base-input__label">
             {{ props.label }}
         </div>
         <input
             :placeholder="props.placeholder"
             :value="props.modelValue"
-            class="base-input__input"
+            :class="['base-input__input', icon]"
             @input="handlerInput" />
     </div>
 </template>
@@ -16,6 +16,14 @@
         modelValue: {
             type: String,
             required: true,
+        },
+        classList: {
+            type: Array,
+            default: [],
+        },
+        icon: {
+            type: String,
+            default: '',
         },
         label: {
             type: String,
@@ -51,17 +59,27 @@
             line-height: 16px;
         }
         &__input {
+            width: 100%;
+            margin-bottom: 4px;
+            padding: 8px 36px 8px 16px;
+            font-family: inherit;
+            font-size: 16px;
+            line-height: 24px;
+            color: $accentColor;
             background-color: $primaryColor;
             border: 1px solid $borderColorDefault;
             border-radius: $borderRadius;
-            margin-bottom: 4px;
-            padding: 12px 16px;
-            width: 100%;
             box-sizing: border-box;
 
+            &.error:focus {
+                outline: 1px solid $borderColorError;
+            }
+
+            &:focus {
+                outline: 2px solid $borderColorAccent;
+            }
+
             &::placeholder {
-                font-family: 'Rubik';
-                font-size: 16px;
                 color: $placeholderColor;
             }
         }

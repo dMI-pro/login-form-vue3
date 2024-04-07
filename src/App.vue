@@ -21,11 +21,13 @@
 
   <BaseInput
     v-model="parentModelPassword"
+    icon="icon-show_pass"
     label="Enter password"
     placeholder="Placeholder" />
 
     <BaseInput
     v-model="parentModelConfirmPassword"
+    icon="icon-show_pass"
     label="Confirm the password"
     placeholder="Placeholder" />
 </form>
@@ -53,7 +55,7 @@ body {
   -moz-box-sizing: border-box;
 }
 .login-form {
-  min-width: 343px;
+  max-width: 343px;
   color: $mainColor;
 
   &__social {
@@ -68,5 +70,11 @@ body {
   &__nickname {
     flex: 0 0 75%;
   }
+}
+
+.icon-show_pass {
+  background-image: url("@image/show_pass.png");
+  background-repeat: no-repeat;
+  background-position: right 8px top 50%;
 }
 </style>
