@@ -25,8 +25,8 @@
     label="Enter password"
     placeholder="Placeholder" />
 
-  <PasswordInput
-    v-model="form_state.parent_model_confirm_password"
+  <ConfirmPasswordInput
+    :password="form_state.parent_model_password"
     icon="icon-show_pass"
     label="Confirm the password"
     placeholder="Placeholder" />
@@ -36,6 +36,8 @@
 <script setup>
   import BaseInput from '@components/BaseInput.vue'
   import PasswordInput from '@components/PasswordInput.vue'
+  import ConfirmPasswordInput from './components/ConfirmPasswordInput.vue';
+
   import { reactive } from 'vue'
 
   const form_state = reactive({
@@ -44,7 +46,7 @@
     parent_model_nickname: '',
     parent_model_password: '',
     parent_model_confirm_password: '',
-  })
+  });
 </script>
 
 <style lang="scss">
