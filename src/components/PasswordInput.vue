@@ -11,10 +11,10 @@
             :class="['base-input__input',
                 icon,
                 {
-                    'successful': steps === 5 && !is_min_characters,
-                    'error': steps !== 0 && !is_min_characters,
-                    'accent': steps > 0 && is_min_characters,
-                    'focus': is_input_focus, // dMI: ## не работает...
+                    'successful': state.steps === 5 && !state.few_letter,
+                    'error': state.steps >= 3 && state.few_letter && state.error_few_letters,
+                    'accent': state.steps > 0 && state.steps !== 5 && !state.few_letter && !state.error_few_letters,
+                    'focus': state.is_input_focus,
                 }]"
             @input="handlerInput"
             @focus="handlerFocus"
@@ -22,27 +22,27 @@
         <div
             for="base-input"
             class="base-input__message">
-            <span v-if="loading" class="base-input__message__icon">
+            <span v-if="state.loading" class="base-input__message__icon">
                 <img src="@image/loading.svg" />
             </span>
-            <span v-else-if="steps === 5 && !is_min_characters" class="base-input__message__icon">
+            <span v-else-if="state.steps === 5 && !state.few_letter" class="base-input__message__icon">
                 <img src="@image/tick-square.svg" />
             </span>
-            <span v-else-if="steps !== 0 && !is_min_characters" class="base-input__message__icon">
+            <span v-else-if="state.steps >= 3 && state.few_letter && state.error_few_letters" class="base-input__message__icon">
                 <img src="@image/warning-2.svg" />
             </span>
             <span v-else class="base-input__message__icon">
                 <img src="@image/info-circle.svg" />
             </span>
             <span class="base-input__message__txt">
-                {{ message }}
+                {{state.steps}}/5{{ message }}
             </span>
         </div>
     </div>
 </template>
 
 <script setup>
-    import { ref } from 'vue'
+    import { ref, reactive } from 'vue'
     import { useDebounceFn } from "@vueuse/core"
     import { hasUppercaseLetters, hasLetters, hasSpecCharacter } from "@js/validators"
 
@@ -71,71 +71,94 @@
 
     const emit = defineEmits(['update:modelValue']);
 
-    let is_input_focus = ref(false);
-    let is_min_characters = ref(true);
-    let steps = 0;
-    let message = `0/5 - At least one uppercase letter`;
+    const state = reactive({
+        steps: 0,
+        is_input_focus: false,
+        successful: false,
+        error: false,
+        confirm_pass: undefined,
+        loading: false,
+        few_letter: false,
+        error_few_letters: false,
+    })
+
+    let message = ` - At least one uppercase letter`;
 
     let count_letters = 0;
     let count_uppercase_letters = 0;
     let count_spec_character = 0;
 
-    let loading = ref(false);
-
-    const handlerInput = useDebounceFn((event) => {
-        steps = 0;
-        const value = event.target.value;
+    const validatePassword = (value) => {
+        state.steps = 0;
 
         count_letters = hasLetters(value);
         count_uppercase_letters = hasUppercaseLetters(value);
         count_spec_character = hasSpecCharacter(value);
 
         if (count_letters >= 1) {
-            steps = count_letters;
+            state.steps = count_letters;
             if (count_letters > 3) {
-                steps = 3;
+                state.steps = 3;
             }
 
-            message = `${steps}/5 - At least one uppercase letter`;
+            message = ` - At least one uppercase letter`;
         }
 
         if (count_uppercase_letters >= 1) {
             if ((+count_letters + +count_uppercase_letters) <= 4) {
-                steps = +count_letters + +count_uppercase_letters;
+                state.steps = +count_letters + +count_uppercase_letters;
             } else {
-                steps = 4;
+                state.steps = 4;
             }
 
-            message = `${steps}/5 - At least one digit`;
+            message = ` - At least one digit`;
         }
 
         if (count_spec_character >= 1) {
             if (count_uppercase_letters >= 1) {
                 if ((+count_letters + +count_uppercase_letters + +count_spec_character) <= 5) {
-                    steps = +count_letters + +count_uppercase_letters + +count_spec_character;
+                    state.steps = +count_letters + +count_uppercase_letters + +count_spec_character;
                 } else {
-                    steps = 5;
+                    state.steps = 5;
                 }
-            } else {
-                steps += 1;
-            }
 
-            message = `${steps}/5 - Requirements followed`;
+                message = ` - Requirements followed`;
+            } else {
+                if ((+count_letters + +count_uppercase_letters + +count_spec_character) <= 4) {
+                    state.steps += count_spec_character;
+                    message = ` - At least one uppercase letter`;
+                } else {
+                    state.steps = 4;
+                }
+            }
         }
 
-        if (steps === 0) message = `0/5 - At least one uppercase letter`;
+        if (state.steps === 0) message = ` - At least one uppercase letter`;
 
-        if (steps >= 5) is_min_characters = count_uppercase_letters >= 1 && count_spec_character >= 1 && count_letters + count_uppercase_letters + count_spec_character < 8;
+        state.few_letter = count_uppercase_letters >= 1 && count_spec_character >= 1 && count_letters + count_uppercase_letters + count_spec_character < 8;
+        if ((state.steps === 5 && state.few_letter) || (count_uppercase_letters >= 1 && count_uppercase_letters >= 1 && count_spec_character >= 1)) {
+            state.error_few_letters = true;
+            message = ` - At least 8 characters`;
+        }
+
+        state.loading = false;
+    };
+
+    const handlerInput = useDebounceFn((event) => {
+        state.loading = true;
+
+        validatePassword(event.target.value);
 
         emit('update:modelValue', event.target.value);
     }, 700);
 
+
     const handlerFocus = function() {
-        is_input_focus = true;
+        state.is_input_focus = true;
     };
 
     const handlerBlur = function() {
-        is_input_focus = false;
+        state.is_input_focus = false;
     };
 </script>
 
@@ -143,10 +166,6 @@
     @import '@scss/_variables.scss';
 
     .accent {
-        outline-width: 1px;
-        outline-style: solid;
-        outline-color: $borderColorAccent;
-
         & + .base-input__message {
             color: $subtextColor;
             opacity: 1;

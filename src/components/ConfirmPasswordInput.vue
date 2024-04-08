@@ -14,7 +14,7 @@
                     'successful': state.successful && state.confirm_pass,
                     'error': state.error && state.confirm_pass,
                     'accent': state.is_input_focus && !state.successful && !state.error,
-                    'focus': state.is_input_focus, // dMI: ## не работает...
+                    'focus': state.is_input_focus,
                 }]"
             @input="handlerInput"
             @focus="handlerFocus"
@@ -73,7 +73,6 @@ import { reactive } from 'vue';
     let message = `Password does not match`;
 
     const debouncedRequest = useDebounceFn(() => {
-        console.log('props.password', props.password)
         if (!props.password) return;
 
         if (props.password === state.confirm_pass) {

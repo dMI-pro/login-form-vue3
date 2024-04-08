@@ -138,10 +138,21 @@
     }
   }
 
-  .focus.accent,
-  .focus.successful,
-  .focus.error {
+  .focus {
+    outline-width: 2px;
+    outline-style: solid;
+    outline-color: $borderColorAccent;
+
+    &.accent,
+    &.successful,
+    &.error {
       outline-width: 2px;
+    }
+
+    & + .base-input__message{
+      color: $subtextColor;
+      opacity: 1;
+    }
   }
 
   .error {
@@ -150,8 +161,8 @@
       outline-color: $borderColorError;
 
       & + .base-input__message{
-          color: $borderColorError;
-          opacity: 1;
+        color: $borderColorError;
+        opacity: 1;
       }
   }
 
@@ -164,11 +175,11 @@
   .successful {
       outline-width: 1px;
       outline-style: solid;
-      outline-color: $borderColorsuccessful;
+      outline-color: $borderColorSuccessful;
 
       & + .base-input__message{
-          color: $borderColorsuccessful;
-          opacity: 1;
+        color: $borderColorSuccessful;
+        opacity: 1;
       }
   }
 </style>
