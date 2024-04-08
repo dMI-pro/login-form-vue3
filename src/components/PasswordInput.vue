@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-    import { ref, reactive } from 'vue'
+    import { reactive } from 'vue'
     import { useDebounceFn } from "@vueuse/core"
     import { hasUppercaseLetters, hasLetters, hasSpecCharacter } from "@js/validators"
 
@@ -150,7 +150,7 @@
         validatePassword(event.target.value);
 
         emit('update:modelValue', event.target.value);
-    }, 700);
+    }, 500);
 
 
     const handlerFocus = function() {

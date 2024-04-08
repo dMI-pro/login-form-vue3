@@ -70,10 +70,11 @@ import { reactive } from 'vue';
         confirm_pass: undefined,
     })
 
-    let message = `Password does not match`;
+    let message = ``;
 
     const debouncedRequest = useDebounceFn(() => {
         if (!props.password) return;
+        message = `Password does not match`;
 
         if (props.password === state.confirm_pass) {
             state.successful = true;
@@ -87,7 +88,7 @@ import { reactive } from 'vue';
             state.successful = false;
             state.error = false;
         }
-    }, 700);
+    }, 500);
 
     const handlerInput = (event) => {
         state.confirm_pass = event.target.value;

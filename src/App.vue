@@ -32,8 +32,8 @@
         placeholder="Placeholder" />
     
         <div class="login-form__btn">
-          <button class="accent-btn">Create an account</button>
-          <button class="pseudo-btn">I have an account</button>
+          <button @click="(e) => e.preventDefault()" class="accent-btn">Create an account</button>
+          <button @click="(e) => e.preventDefault()" class="pseudo-btn">I have an account</button>
         </div>
     </form>
     </template>
@@ -100,6 +100,10 @@
             line-height: 24px;
             border-radius: $borderRadius;
             transition: all .5s;
+
+            &:focus {
+              outline: none;
+            }
           }
     
           & > .accent-btn {
