@@ -43,8 +43,8 @@
 </script>
 
 <style lang="scss" scoped>
-     @import '@scss/_variables.scss';
-    
+    @import '@scss/_variables.scss';
+
     .base-input {
         display: flex;
         flex-direction: column;
@@ -58,6 +58,7 @@
             font-size: 14px;
             line-height: 16px;
         }
+
         &__input {
             width: 100%;
             margin-bottom: 4px;
@@ -70,6 +71,8 @@
             border: 1px solid $borderColorDefault;
             border-radius: $borderRadius;
             box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
 
             &.error:focus {
                 outline: 1px solid $borderColorError;
